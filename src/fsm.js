@@ -8,7 +8,6 @@ class FSM {
         this.states = config.states;
         this.statesStack = [this.initial]
         this.undoStack = [];
-        this.redoStack =[];
     }
 
     /**
@@ -28,7 +27,6 @@ class FSM {
             this.state = state;
         if (this.state in this.states ) {
         this.statesStack.push(this.state);
-        this.redoStack = [];
         this.undoStack = [];
         }
         else {
@@ -45,7 +43,6 @@ class FSM {
         let currentState = this.getState();
         if (this.event in this.states[currentState].transitions){
           this.statesStack.push(this.states[currentState].transitions[this.event]);
-          this.redoStack = [];
           this.undoStack = [];
 
           return this.getState();
@@ -97,7 +94,6 @@ class FSM {
         else {
             currentStateValue = this.statesStack.pop();
             this.undoStack.push(currentStateValue);
-            this.redoStack.push(currentStateValue);
             return true;
         }
     }
@@ -108,12 +104,12 @@ class FSM {
      * @returns {Boolean}
      */
     redo() {
-        if (this.redoStack == 0) {
+        if (this.undoStack == 0) {
             return false
         }
         else {
-            this.statesStack.push(this.redoStack.pop());
-            this.undoStack.pop();
+            this.statesStack.push(this.undoStack.pop());
+            
             return true;
         }
     }
@@ -124,7 +120,6 @@ class FSM {
     clearHistory() {
         this.statesStack = [this.initial];
         this.undoStack = [];
-        this.redoStack =[];
     }
 }
 
